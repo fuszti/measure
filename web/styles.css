@@ -1,0 +1,122 @@
+/* Main styles */
+body {
+    background-color: #f8f9fa;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* Card styling */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.template-card {
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.template-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard Charts */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 15px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Custom form styling */
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Navbar active link */
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+}
+
+/* Time filter buttons */
+.time-filter.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Template value definitions */
+.value-definition {
+    position: relative;
+    border: 1px solid #dee2e6;
+}
+
+.value-definition .remove-value-btn {
+    transition: opacity 0.2s;
+}
+
+.value-definitions-container .value-definition:only-child .remove-value-btn {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+    
+    .stat-card {
+        margin-bottom: 15px;
+    }
+}
+
+/* Measurement table */
+#measurements-table td {
+    vertical-align: middle;
+}
+
+.measurement-values-display {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.measurement-values-display li {
+    margin-bottom: 5px;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
