@@ -2,3 +2,17 @@ fastapi==0.104.0
 uvicorn==0.23.2
 pydantic==2.4.2
 python-dateutil==2.8.2
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
+python-dotenv==1.0.0
+python-multipart==0.0.6  # For form data processing
+bcrypt==4.0.1           # Pinned to specific version for compatibility
+passlib[bcrypt]==1.7.4   # For password hashing
+python-jose[cryptography]==3.3.0  # For JWT tokens
+
+# Testing dependencies
+pytest==7.4.3
+pytest-cov==4.1.0
+httpx==0.25.0
+requests==2.31.0

@@ -28,8 +28,40 @@ const measurementValuesContainer = document.getElementById('measurement-values-c
 const addMeasurementModal = new bootstrap.Modal(document.getElementById('add-measurement-modal'));
 const addTemplateModal = new bootstrap.Modal(document.getElementById('add-template-modal'));
 
+// Authentication functions
+function checkAuth() {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = '/login.html';
+        return false;
+    }
+    return true;
+}
+
+async function getUserInfo() {
+    try {
+        const user = await fetchAPI('/users/me');
+        if (user && user.username) {
+            document.getElementById('username-display').textContent = user.username;
+        }
+    } catch (error) {
+        console.error('Error getting user info:', error);
+    }
+}
+
+function logout() {
+    localStorage.removeItem('access_token');
+    window.location.href = '/login.html';
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is authenticated
+    if (!checkAuth()) return;
+    
+    // Get user info
+    getUserInfo();
+    
     initNavigation();
     initTimeFilters();
     loadTemplates();
@@ -50,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveTemplateBtn.addEventListener('click', saveTemplate);
     saveMeasurementBtn.addEventListener('click', saveMeasurement);
     addValueBtn.addEventListener('click', addValueDefinition);
+    document.getElementById('logout-btn').addEventListener('click', logout);
     
     // Event delegation for dynamic elements
     document.addEventListener('click', (e) => {
@@ -101,11 +134,37 @@ function initTimeFilters() {
 
 // API Functions
 async function fetchAPI(endpoint, options = {}) {
+    // Check if user is authenticated
+    const token = localStorage.getItem('access_token');
+    if (!token && !endpoint.includes('/token')) {
+        // Redirect to login if not authenticated
+        window.location.href = '/login.html';
+        return null;
+    }
+    
     try {
+        // Add authorization header if token exists
+        if (token) {
+            if (!options.headers) {
+                options.headers = {};
+            }
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        
         const response = await fetch(`${API_URL}${endpoint}`, options);
+        
+        // Handle authentication errors
+        if (response.status === 401) {
+            // Clear token and redirect to login
+            localStorage.removeItem('access_token');
+            window.location.href = '/login.html';
+            return null;
+        }
+        
         if (!response.ok) {
             throw new Error(`API error: ${response.status}`);
         }
+        
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
