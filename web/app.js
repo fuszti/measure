@@ -1,5 +1,18 @@
 // Configuration
-const API_URL = 'http://localhost:8000';
+const API_URL = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/api';
+
+// UUID generator (fallback for browsers not supporting crypto.randomUUID)
+function generateUUID() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+    }
+    
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 // Global state
 let templates = [];
@@ -151,6 +164,18 @@ async function fetchAPI(endpoint, options = {}) {
             options.headers['Authorization'] = `Bearer ${token}`;
         }
         
+        // Log for debugging
+        console.log(`Fetching from: ${API_URL}${endpoint}`);
+        
+        // Ensure request has proper CORS mode
+        if (!options.mode) {
+            options.mode = 'cors';
+        }
+        if (!options.headers) {
+            options.headers = {};
+        }
+        options.headers['Accept'] = 'application/json';
+        
         const response = await fetch(`${API_URL}${endpoint}`, options);
         
         // Handle authentication errors
@@ -168,7 +193,11 @@ async function fetchAPI(endpoint, options = {}) {
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
-        alert(`Error: ${error.message}`);
+        console.error('API URL:', `${API_URL}${endpoint}`);
+        // Only show alert in development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            alert(`Error: ${error.message}`);
+        }
         return null;
     }
 }
@@ -327,7 +356,7 @@ async function saveTemplate() {
     
     // Build template object
     const template = {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         name,
         description,
         value_definitions: valueDefinitions,
@@ -495,7 +524,7 @@ async function saveMeasurement() {
     
     // Build measurement object
     const measurement = {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         template_id: templateId,
         values,
         measured_at: measuredAt,
